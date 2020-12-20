@@ -11,31 +11,49 @@ function PubSubImpl(publishKey, subscribeKey) {
     _throwStartupError("subscribeKey is missing");
   }
 
-  const _uuid = (function () {
-    const uuid = localStorage.getItem(subscribeKey + "uuid");
-    if (uuid) return uuid;
-    return PubNub.generateUUID();
-  })();
-  const service = new PubNub({
-    publishKey,
-    subscribeKey,
-    uuid: _uuid,
-  });
-  if (!service) _throwStartupError("service failed to initialize");
-  service.addListener({
-    status: function (statusEvent) {
-      console.log("STATUS", statusEvent);
-    },
-    message: function (msg) {
-      console.log("MESSAGE", msg);
-    },
-    presence: function (presenceEvent) {
-      console.log("PRESENCE", presenceEvent);
-    },
-  });
+  /////////////////////////////////////////////////////////////
+  ////// SERVICE LISTENERS
+  /////////////////////////////////////////////////////////////
+  function _onStatusEvent(e) {
+    console.log("STATUS", e);
+  }
 
+  function _onMessage(msg) {
+    console.log("MESSAGE", msg);
+  }
+
+  function _onPresenceEvent(e) {
+    console.log("PRESENCE", e);
+  }
+
+  /////////////////////////////////////////////////////////////
+  ////// INITIALIZE SERVICE
+  /////////////////////////////////////////////////////////////
+  let _uuid, _service;
+  (function () {
+    _uuid = (function () {
+      const uuid = localStorage.getItem(subscribeKey + "uuid");
+      if (uuid) return uuid;
+      return PubNub.generateUUID();
+    })();
+    _service = new PubNub({
+      publishKey,
+      subscribeKey,
+      uuid: _uuid,
+    });
+    if (!_service) _throwStartupError("service failed to initialize");
+    _service.addListener({
+      status: _onStatusEvent,
+      message: _onMessage,
+      presence: _onPresenceEvent,
+    });
+  })();
+
+  /////////////////////////////////////////////////////////////
+  ////// API METHODS
+  /////////////////////////////////////////////////////////////
   function _publish() {
-    service.publish(
+    _service.publish(
       {
         message: "hiya",
         channel: "room-main",
@@ -47,7 +65,7 @@ function PubSubImpl(publishKey, subscribeKey) {
   }
 
   function _subscribe() {
-    service.subscribe({
+    _service.subscribe({
       channels: ["room-main"],
       withPresence: true,
     });
