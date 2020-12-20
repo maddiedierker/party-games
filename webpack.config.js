@@ -7,10 +7,11 @@ module.exports = {
   entry: "./src/index.js",
   devtool: "inline-source-map",
   devServer: {
-
+    contentBase: path.join(__dirname, "dist"),
+    open: true,
   },
   plugins: [
-    new CleanWebpackPlugin({cleanStaleWebpackAssets: false}),
+    new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new HtmlWebpackPlugin({
       title: "party games",
     }),
