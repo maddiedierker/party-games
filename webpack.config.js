@@ -11,7 +11,6 @@ module.exports = {
   devtool: "inline-source-map",
   devServer: {
     contentBase: path.join(__dirname, "dist"),
-    open: true,
   },
   plugins: [
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
