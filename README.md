@@ -1,6 +1,6 @@
 ## run locally
 
-```
+```javascript
 nvm use 11.4
 npm install
 
@@ -9,4 +9,12 @@ npm start
 
 // build
 npm run build
+```
+
+## comments
+
+```javascript
+/////////////////////////////////////////////////////////////
+////// SECTION COMMENTS LOOK LIKE THIS
+/////////////////////////////////////////////////////////////
 ```
