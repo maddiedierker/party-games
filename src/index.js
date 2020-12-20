@@ -1,1 +1,3 @@
-console.log("hai");
+import _ from "lodash";
+
+console.log(_);
