@@ -1,6 +1,3 @@
-import css from "@src/style.css";
-console.log(css);
-
 function UI(rootId) {
   const rootEl = document.getElementById(rootId);
   if (!rootEl) {

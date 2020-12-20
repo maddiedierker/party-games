@@ -8,6 +8,11 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   mode: "development",
   entry: "./src/index.js",
+  resolve: {
+    alias: {
+      "@src": path.resolve(__dirname, "src"),
+    },
+  },
   devtool: "inline-source-map",
   devServer: {
     contentBase: path.join(__dirname, "dist"),
@@ -15,16 +20,11 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new HtmlWebpackPlugin({
-      title: "party games",
+      template: path.resolve(__dirname, "src", "index.html"),
     }),
   ],
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
-  },
-  resolve: {
-    alias: {
-      "@src": path.resolve(__dirname, "./src"),
-    },
   },
 };
