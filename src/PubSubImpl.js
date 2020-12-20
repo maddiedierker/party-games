@@ -2,7 +2,7 @@ import PubNub from "pubnub";
 
 function PubSubImpl(publishKey, subscribeKey) {
   function _throwStartupError(msg) {
-    throw new Error("PubSubImpl cannot start: " + msg);
+    throw new Error(`PubSubImpl cannot start: ${msg}`);
   }
 
   if (!publishKey) {
@@ -26,17 +26,20 @@ function PubSubImpl(publishKey, subscribeKey) {
     console.log("PRESENCE", e);
   }
 
+  function _onPublish(status, response) {
+    console.log("AFTER PUBLISH", status, response);
+  }
+
   /////////////////////////////////////////////////////////////
   ////// INITIALIZE SERVICE
   /////////////////////////////////////////////////////////////
-  let _uuid, _service;
-  (function () {
-    _uuid = (function () {
+  const { _uuid, _service } = (function serviceInit() {
+    const _uuid = (function () {
       const uuid = localStorage.getItem(subscribeKey + "uuid");
       if (uuid) return uuid;
       return PubNub.generateUUID();
     })();
-    _service = new PubNub({
+    const _service = new PubNub({
       publishKey,
       subscribeKey,
       uuid: _uuid,
@@ -47,28 +50,19 @@ function PubSubImpl(publishKey, subscribeKey) {
       message: _onMessage,
       presence: _onPresenceEvent,
     });
+
+    return { _uuid, _service };
   })();
 
   /////////////////////////////////////////////////////////////
   ////// API METHODS
   /////////////////////////////////////////////////////////////
-  function _publish() {
-    _service.publish(
-      {
-        message: "hiya",
-        channel: "room-main",
-      },
-      function (status, response) {
-        console.log("AFTER PUBLISH", status, response);
-      }
-    );
+  function _publish(channel, message) {
+    _service.publish({ channel, message }, _onPublish);
   }
 
-  function _subscribe() {
-    _service.subscribe({
-      channels: ["room-main"],
-      withPresence: true,
-    });
+  function _subscribe(channels) {
+    _service.subscribe({ channels, withPresence: true });
   }
 
   return {
