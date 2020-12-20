@@ -1,3 +1,5 @@
-import _ from "lodash";
+import env from "/.env";
 
-console.log("sup");
+if (!env) {
+  throw new Error("env object is required");
+}

@@ -2,8 +2,8 @@ const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-// TODO: setup environment variables https://webpack.js.org/guides/environment-variables/
-// TODO: setup production https://webpack.js.org/guides/production/
+// TODO: set up environment variables https://webpack.js.org/guides/environment-variables/
+// TODO: set up production https://webpack.js.org/guides/production/
 
 module.exports = {
   mode: "development",
