@@ -1,32 +1,56 @@
 import PubNub from "pubnub";
 
 function PubSubImpl(publishKey, subscribeKey) {
+  function _throwStartupError(msg) {
+    throw new Error("PubSubImpl cannot start: " + msg);
+  }
+
   if (!publishKey) {
-    throw new Error("PubSub cannot start: publishKey is missing");
+    _throwStartupError("publishKey is missing");
   } else if (!subscribeKey) {
-    throw new Error("PubSub cannot start: subscribeKey is missing");
+    _throwStartupError("subscribeKey is missing");
   }
 
-  function _getUuid() {
-    return "madkas";
-  }
-
+  const _uuid = (function () {
+    const uuid = localStorage.getItem(subscribeKey + "uuid");
+    if (uuid) return uuid;
+    return PubNub.generateUUID();
+  })();
   const service = new PubNub({
     publishKey,
     subscribeKey,
-    uuid: _getUuid(),
+    uuid: _uuid,
   });
-  if (!service) {
-    throw new Error("PubSub cannot start: service failed to initialize");
-  }
+  if (!service) _throwStartupError("service failed to initialize");
+  service.addListener({
+    status: function (statusEvent) {
+      console.log("STATUS", statusEvent);
+    },
+    message: function (msg) {
+      console.log("MESSAGE", msg);
+    },
+    presence: function (presenceEvent) {
+      console.log("PRESENCE", presenceEvent);
+    },
+  });
 
   function _publish() {
-    console.log("publishing");
-    // service.publish();
+    service.publish(
+      {
+        message: "hiya",
+        channel: "room-main",
+      },
+      function (status, response) {
+        console.log("AFTER PUBLISH", status, response);
+      }
+    );
   }
 
   function _subscribe() {
-    console.log("subscribing");
+    service.subscribe({
+      channels: ["room-main"],
+      withPresence: true,
+    });
   }
 
   return {

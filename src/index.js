@@ -6,5 +6,5 @@ if (!env) {
 import PubSub from "@src/PubSub";
 
 const pubSub = new PubSub(env.pubPublishKey, env.pubSubscribeKey);
-pubSub.publish();
 pubSub.subscribe();
+pubSub.publish();
