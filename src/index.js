@@ -5,4 +5,6 @@ if (!env) {
 
 import PubSub from "@src/PubSub";
 
-new PubSub(env.pubPublishKey, env.pubSubscribeKey);
+const pubSub = new PubSub(env.pubPublishKey, env.pubSubscribeKey);
+pubSub.publish();
+pubSub.subscribe();
