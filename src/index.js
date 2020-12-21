@@ -1,7 +1,8 @@
 import env from "/.env";
 import PubSub from "@src/PubSub";
-import UI from "@src/UI";
 import Player from "@src/Player";
+import Playspace from "@src/Playspace";
+import UI from "@src/UI";
 
 /////////////////////////////////////////////////////////////
 ////// ENVIRONMENT VARIABLES
@@ -21,7 +22,13 @@ const pubSub = new PubSub(env.pubPublishKey, env.pubSubscribeKey);
 new Player();
 
 /////////////////////////////////////////////////////////////
+////// PLAYSPACE
+/////////////////////////////////////////////////////////////
+const playspace = new Playspace();
+// TODO: subscribe to stuff
+
+/////////////////////////////////////////////////////////////
 ////// UI
 /////////////////////////////////////////////////////////////
-new UI("app");
-// subscribe to stuff
+new UI("app", [playspace]);
+// TODO: subscribe to stuff
