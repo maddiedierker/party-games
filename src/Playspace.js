@@ -1,11 +1,30 @@
-function Playspace() {
-  // maybe use p5/p5.play?
-  // renders environment (on its own canvas)
-  // renders players (on a separate canvas because they'll need to re-render a lot)
+import UIElement from "@src/UIElement";
+import style from "@src/style.css";
 
-  const _el = document.createElement("canvas");
+function Playspace(players, settings) {
+  const _canvas = document.createElement("canvas");
+  _canvas.width *= settings.scale;
+  _canvas.height *= settings.scale;
+  const _ctx = _canvas.getContext("2d");
+  _ctx.scale(settings.scale, settings.scale);
+
+  (function render() {
+    clear();
+    players.forEach(function (player) {
+      player.render(_ctx);
+    });
+
+    requestAnimationFrame(render);
+  })();
+
+  function clear() {
+    _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
+  }
+
   return {
-    el: _el,
+    ...new UIElement(),
+    el: _canvas,
+    classNames: [style.playspace],
   };
 }
 

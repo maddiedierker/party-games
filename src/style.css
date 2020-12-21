@@ -10,14 +10,7 @@ body {
  * CLASSES
  */
 .playspace {
-  background-color: yellow;
-  width: 500px;
-  height: 400px;
-}
-
-.chatLog {
-  height: 100%;
-  background-color: aqua;
+  background-color: cyan;
 }
 
 /* 
