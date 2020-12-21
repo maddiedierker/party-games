@@ -23,6 +23,24 @@ module.exports = {
       template: path.resolve(__dirname, "src", "index.html"),
     }),
   ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
+            options: {
+              modules: true,
+            },
+          },
+        ],
+      },
+    ],
+  },
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),

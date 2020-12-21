@@ -1,3 +1,6 @@
+import style from "@src/style.css";
+console.log(style);
+
 function UI(rootId) {
   const rootEl = document.getElementById(rootId);
   if (!rootEl) {
@@ -13,7 +16,9 @@ function UI(rootId) {
   const usernameInput = _createInput();
   const chatInput = _createInput();
   const playspace = (function () {
-    return document.createElement("canvas");
+    const el = document.createElement("canvas");
+
+    return el;
   })();
   const chatLog = (function () {
     return document.createElement("div");
