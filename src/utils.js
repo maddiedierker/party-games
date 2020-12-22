@@ -1,5 +1,5 @@
 function type(self) {
-  return self.__proto__.constructor.name;
+  return self.__proto__.constructor.name; // i'm not sorry
 }
 
 function throwStartupError(type, msg) {

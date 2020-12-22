@@ -19,9 +19,7 @@ export default function Player(x, y, pubSub) {
   ////// API METHODS
   /////////////////////////////////////////////////////////////
   function _render(ctx) {
-    ctx.beginPath();
-    ctx.rect(x, y, 10, 10);
-    ctx.stroke();
+    Player.draw(ctx, x, y);
   }
 
   function _move(event) {
@@ -42,3 +40,8 @@ export default function Player(x, y, pubSub) {
     move: _move,
   };
 }
+Player.draw = function (ctx, x, y) {
+  ctx.beginPath();
+  ctx.rect(x, y, 10, 10);
+  ctx.stroke();
+};

@@ -15,10 +15,7 @@ export default function Playspace(player, partyGoersController) {
   (function render() {
     clear();
     player.render(_ctx);
-
-    // partyGoers.forEach(function (partyGoer) {
-    //   partyGoer.render(_ctx);
-    // });
+    partyGoersController.renderAll(_ctx);
 
     requestAnimationFrame(render);
   })();

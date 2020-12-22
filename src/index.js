@@ -14,12 +14,14 @@ if (!env) {
 const pubSub = new PubSub(env.pubPublishKey, env.pubSubscribeKey);
 const inputManager = new InputManager();
 const player = new Player(10, 10, pubSub);
-const partyGoersController = new PartyGoersController();
+const partyGoersController = new PartyGoersController(pubSub);
 const playspace = new Playspace(player, partyGoersController);
 new UI("app", [playspace]);
 
 console.log(pubSub.uuid, "-- it me");
 
-// register listeners
+// pubsub listeners
 pubSub.addListener("message", partyGoersController.onMessage);
+
+// input listeners
 inputManager.addListener("keydown", player.move);
