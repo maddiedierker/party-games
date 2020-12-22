@@ -1,4 +1,4 @@
-function InputManager() {
+export default function InputManager() {
   let _listeners = [];
 
   function _addListener(type, callback) {
@@ -17,5 +17,3 @@ function InputManager() {
     addListener: _addListener,
   };
 }
-
-export default InputManager;

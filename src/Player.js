@@ -1,10 +1,23 @@
-function Player(x, y, pubSub, npc = false) {
+import Message from "@src/Message";
+import { MTypes } from "@src/MType";
+import Settings from "@src/Settings";
+
+export default function Player(x, y, pubSub) {
   const _room = "main";
+  pubSub.subscribe([_roomChannel()]);
+
   function _roomChannel() {
     return "room-" + _room;
   }
-  pubSub.subscribe([_roomChannel()]);
 
+  function _publishPosition() {
+    const msg = new Message(MTypes.position, { position: { x, y } });
+    pubSub.publish(_roomChannel(), msg);
+  }
+
+  /////////////////////////////////////////////////////////////
+  ////// API METHODS
+  /////////////////////////////////////////////////////////////
   function _render(ctx) {
     ctx.beginPath();
     ctx.rect(x, y, 10, 10);
@@ -13,23 +26,19 @@ function Player(x, y, pubSub, npc = false) {
 
   function _move(event) {
     const { key } = event;
-    const xMovement =
-      ["ArrowRight", "d"].includes(key) - ["ArrowLeft", "a"].includes(key);
-    const yMovement =
-      ["ArrowDown", "s"].includes(key) - ["ArrowUp", "w"].includes(key);
+    const { rightKeys, leftKeys, downKeys, upKeys } = Settings;
+    const xMovement = rightKeys.includes(key) - leftKeys.includes(key);
+    const yMovement = downKeys.includes(key) - upKeys.includes(key);
     if (xMovement === 0 && yMovement === 0) return;
 
     x += xMovement;
     y += yMovement;
 
-    pubSub.publish(_roomChannel(), { position: { x, y } });
+    _publishPosition();
   }
 
   return {
-    npc,
     render: _render,
-    move: npc ? undefined : _move,
+    move: _move,
   };
 }
-
-export default Player;

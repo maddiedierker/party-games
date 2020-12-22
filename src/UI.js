@@ -1,16 +1,15 @@
-function UI(rootId, children) {
-  function _throwStartupError(msg) {
-    throw new Error(`UI cannot start: ${msg}`);
-  }
+import utils from "@src/utils";
 
+export default function UI(rootId, children) {
+  const t = utils.type(this);
   const rootEl = document.getElementById(rootId);
   if (!rootEl)
-    _throwStartupError(`element with rootId '${rootId}' does not exist`);
+    utils.throwStartupError(t, `element with id '${rootId}' does not exist`);
 
   children.forEach(function (child) {
-    if (!child) _throwStartupError("UI cannot start: empty child");
+    if (!child) utils.throwStartupError(t, "empty child");
     if (!child.valid || !child.valid())
-      _throwStartupError("UI cannot start: invalid UI child");
+      utils.throwStartupError(t, "invalid UI child");
 
     if (child.classNames.length > 0) {
       const { classNames, el } = child;
@@ -21,5 +20,3 @@ function UI(rootId, children) {
     rootEl.append(child.el);
   });
 }
-
-export default UI;

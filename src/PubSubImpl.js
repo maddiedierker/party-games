@@ -1,6 +1,6 @@
 import PubNub from "pubnub";
 
-function PubSubImpl(publishKey, subscribeKey) {
+export default function PubSubImpl(publishKey, subscribeKey) {
   let _onMessageCallbacks = [];
 
   function _throwStartupError(msg) {
@@ -83,5 +83,3 @@ function PubSubImpl(publishKey, subscribeKey) {
     uuid: _uuid,
   };
 }
-
-export default PubSubImpl;

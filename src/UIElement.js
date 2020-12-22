@@ -1,4 +1,4 @@
-function UIElement() {
+export default function UIElement() {
   function _valid() {
     return this.is === "UIElement" && this.el && this.classNames.length >= 0;
   }
@@ -10,5 +10,3 @@ function UIElement() {
     valid: _valid,
   };
 }
-
-export default UIElement;

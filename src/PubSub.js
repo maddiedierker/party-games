@@ -1,6 +1,6 @@
 import PubSubImpl from "@src/PubSubImpl";
 
-function PubSub(publishKey, subscribeKey) {
+export default function PubSub(publishKey, subscribeKey) {
   const impl = new PubSubImpl(publishKey, subscribeKey);
 
   return {
@@ -10,5 +10,3 @@ function PubSub(publishKey, subscribeKey) {
     uuid: impl.uuid,
   };
 }
-
-export default PubSub;
