@@ -1,17 +1,18 @@
+import Settings from "@src/Settings";
 import UIElement from "@src/UIElement";
 import style from "@src/style.css";
 
-function Playspace(players, settings) {
+function Playspace(partyGoers) {
   const _canvas = document.createElement("canvas");
-  _canvas.width *= settings.scale;
-  _canvas.height *= settings.scale;
+  _canvas.width *= Settings.scale;
+  _canvas.height *= Settings.scale;
   const _ctx = _canvas.getContext("2d");
-  _ctx.scale(settings.scale, settings.scale);
+  _ctx.scale(Settings.scale, Settings.scale);
 
   (function render() {
     clear();
-    players.forEach(function (player) {
-      player.render(_ctx);
+    partyGoers.forEach(function (partyGoer) {
+      partyGoer.render(_ctx);
     });
 
     requestAnimationFrame(render);

@@ -1,4 +1,10 @@
-function Player(x, y, npc = false) {
+function Player(x, y, pubSub, npc = false) {
+  const _room = "main";
+  function _roomChannel() {
+    return "room-" + _room;
+  }
+  pubSub.subscribe([_roomChannel()]);
+
   function _render(ctx) {
     ctx.beginPath();
     ctx.rect(x, y, 10, 10);
@@ -15,11 +21,12 @@ function Player(x, y, npc = false) {
 
     x += xMovement;
     y += yMovement;
+
+    pubSub.publish(_roomChannel(), { position: { x, y } });
   }
 
   return {
     npc,
-    position: { x, y },
     render: _render,
     move: npc ? undefined : _move,
   };

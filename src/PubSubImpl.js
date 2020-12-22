@@ -1,6 +1,8 @@
 import PubNub from "pubnub";
 
 function PubSubImpl(publishKey, subscribeKey) {
+  let _onMessageCallbacks = [];
+
   function _throwStartupError(msg) {
     throw new Error(`PubSubImpl cannot start: ${msg}`);
   }
@@ -9,25 +11,6 @@ function PubSubImpl(publishKey, subscribeKey) {
     _throwStartupError("publishKey is missing");
   } else if (!subscribeKey) {
     _throwStartupError("subscribeKey is missing");
-  }
-
-  /////////////////////////////////////////////////////////////
-  ////// SERVICE LISTENERS
-  /////////////////////////////////////////////////////////////
-  function _onStatusEvent(e) {
-    console.log("STATUS", e);
-  }
-
-  function _onMessage(msg) {
-    console.log("MESSAGE", msg);
-  }
-
-  function _onPresenceEvent(e) {
-    console.log("PRESENCE", e);
-  }
-
-  function _onPublish(status, response) {
-    console.log("AFTER PUBLISH", status, response);
   }
 
   /////////////////////////////////////////////////////////////
@@ -55,6 +38,30 @@ function PubSubImpl(publishKey, subscribeKey) {
   })();
 
   /////////////////////////////////////////////////////////////
+  ////// SERVICE LISTENERS
+  /////////////////////////////////////////////////////////////
+  function _onStatusEvent(e) {
+    console.log("STATUS", e);
+  }
+
+  function _onMessage(msg) {
+    // you can't get messages from yourself
+    if (msg.publisher === _uuid) return;
+    _onMessageCallbacks.forEach(function (callback) {
+      callback(msg);
+    });
+    // console.log("MESSAGE", msg);
+  }
+
+  function _onPresenceEvent(e) {
+    console.log("PRESENCE", e);
+  }
+
+  function _onPublish(status, response) {
+    console.log("AFTER PUBLISH", status, response);
+  }
+
+  /////////////////////////////////////////////////////////////
   ////// API METHODS
   /////////////////////////////////////////////////////////////
   function _publish(channel, message) {
@@ -65,9 +72,15 @@ function PubSubImpl(publishKey, subscribeKey) {
     _service.subscribe({ channels, withPresence: true });
   }
 
+  function _addListener(type, callback) {
+    if (type === "message") _onMessageCallbacks.push(callback);
+  }
+
   return {
     publish: _publish,
     subscribe: _subscribe,
+    addListener: _addListener,
+    uuid: _uuid,
   };
 }
 
