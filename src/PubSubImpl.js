@@ -58,7 +58,7 @@ export default function PubSubImpl(publishKey, subscribeKey) {
   }
 
   function _onPublish(status, response) {
-    console.log("AFTER PUBLISH", status, response);
+    // console.log("AFTER PUBLISH", status, response);
   }
 
   /////////////////////////////////////////////////////////////

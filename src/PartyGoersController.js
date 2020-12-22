@@ -2,9 +2,6 @@ import { MTypes } from "@src/MType";
 import PartyGoer from "@src/PartyGoer";
 import utils from "@src/utils";
 
-// keeps track of all PartyGoers
-// creates new PartyGoers
-// is this just a factory? idk
 export default function PartyGoersController(pubSub) {
   let _partyGoers = {};
 
@@ -30,9 +27,6 @@ export default function PartyGoersController(pubSub) {
         throw new Error(
           `${utils.type(this)} unhandled message type '${message.type}'`
         );
-    }
-
-    if (message.type === MTypes.position) {
     }
   }
 

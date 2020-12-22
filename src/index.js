@@ -22,6 +22,7 @@ console.log(pubSub.uuid, "-- it me");
 
 // pubsub listeners
 pubSub.addListener("message", partyGoersController.onMessage);
+pubSub.addListener("message", player.onMessage);
 
 // input listeners
 inputManager.addListener("keydown", player.move);
