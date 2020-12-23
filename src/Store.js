@@ -2,7 +2,7 @@ function Store() {}
 
 Store.uuid = {
   get: function (subscribeKey) {
-    localStorage.getItem(subscribeKey + "uuid");
+    return localStorage.getItem(subscribeKey + "uuid");
   },
 };
 
