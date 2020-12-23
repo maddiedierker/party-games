@@ -1,26 +1,33 @@
 import Message from "@src/Message";
-import { MTypes } from "@src/MType";
+import { MessageTypes } from "@src/MessageType";
 import Settings from "@src/Settings";
+import utils from "@src/utils";
 
 export default function Player(x, y, pubSub) {
+  const t = utils.type(self);
   let _room;
   _joinRoom("main");
 
   function _joinRoom(name) {
     _room = name;
     pubSub.subscribe([pubSub.channelFor(_room)]);
-    _publishPosition(true);
+    _publishSelf(true);
   }
 
   function _leaveRoom() {
-    const msg = new Message(MTypes.leave);
+    const msg = new Message(MessageTypes.leave);
     const channel = pubSub.channelFor(_room);
     pubSub.publish(channel, msg);
     pubSub.unsubscribe([channel]);
   }
 
-  function _publishPosition(initial = false) {
-    const msg = new Message(MTypes.position, { position: { x, y }, initial });
+  function _publishSelf(initial = false) {
+    const msg = new Message(MessageTypes.partyGoer, {
+      position: { x, y },
+      color: "purple",
+      username: "madkas",
+      initial,
+    });
     pubSub.publish(pubSub.channelFor(_room), msg);
   }
 
@@ -46,8 +53,12 @@ export default function Player(x, y, pubSub) {
 
   function _onMessage(msg) {
     const { message } = msg;
-    if (message.type === MTypes.position && message.initial) {
-      _publishPosition();
+    switch (message.type) {
+      case MessageTypes.partyGoer:
+        if (message.initial) _publishSelf(); // somebody joined, tell them you're here
+        break;
+      default:
+        utils.throwUnhandledMessageError(t, message.type);
     }
   }
 

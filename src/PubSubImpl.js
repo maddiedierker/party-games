@@ -1,16 +1,14 @@
 import PubNub from "pubnub";
+import utils from "@src/utils";
 
 export default function PubSubImpl(publishKey, subscribeKey) {
+  const t = utils.type(self);
   let _onMessageCallbacks = [];
 
-  function _throwStartupError(msg) {
-    throw new Error(`PubSubImpl cannot start: ${msg}`);
-  }
-
   if (!publishKey) {
-    _throwStartupError("publishKey is missing");
+    utils.throwStartupError(t, "publishKey is missing");
   } else if (!subscribeKey) {
-    _throwStartupError("subscribeKey is missing");
+    utils.throwStartupError(t, "subscribeKey is missing");
   }
 
   /////////////////////////////////////////////////////////////
@@ -27,7 +25,7 @@ export default function PubSubImpl(publishKey, subscribeKey) {
       subscribeKey,
       uuid: _uuid,
     });
-    if (!_service) _throwStartupError("service failed to initialize");
+    if (!_service) utils.throwStartupError(t, "service initialization failed");
     _service.addListener({
       status: _onStatusEvent,
       message: _onMessage,

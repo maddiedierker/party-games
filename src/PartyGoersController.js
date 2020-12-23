@@ -1,4 +1,4 @@
-import { MTypes } from "@src/MType";
+import { MessageTypes } from "@src/MessageType";
 import PartyGoer from "@src/PartyGoer";
 import utils from "@src/utils";
 
@@ -25,14 +25,14 @@ export default function PartyGoersController(pubSub) {
   function _onMessage(msg) {
     const { publisher, message } = msg;
     switch (message.type) {
-      case MTypes.position:
+      case MessageTypes.partyGoer:
         _createOrUpdate(publisher, message);
         break;
-      case MTypes.leave:
+      case MessageTypes.leave:
         _leave(publisher);
         break;
       default:
-        throw new Error(`${t} unhandled message type '${message.type}'`);
+        utils.throwUnhandledMessageError(t, message.type);
     }
   }
 

@@ -5,10 +5,9 @@ import Player from "@src/Player";
 import PartyGoersController from "@src/PartyGoersController";
 import Playspace from "@src/UIElements/Playspace";
 import UI from "@src/UI";
+import utils from "@src/utils";
 
-if (!env) {
-  throw new Error("env object is required");
-}
+if (!env) utils.throwError("env object is required");
 
 // initialize everyone
 const windowManager = new WindowManager();
@@ -25,5 +24,5 @@ pubSub.addListener("message", partyGoersController.onMessage);
 pubSub.addListener("message", player.onMessage);
 
 // input listeners
-windowManager.addUnloadCallback(player.onLeave);
 windowManager.addEventListener("keydown", player.move);
+windowManager.addUnloadCallback(player.onLeave);
