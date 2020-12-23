@@ -57,7 +57,7 @@ export default function Player(x, y, pubSub) {
 
   function _onMessage(msg) {
     const { message } = msg;
-    if (message.type === MessageType.partyGoer && message.initial)
+    if (message.type === MessageTypes.partyGoer && message.initial)
       _publishSelf(); // somebody joined, tell them you're here
   }
 
