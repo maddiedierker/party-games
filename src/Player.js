@@ -48,10 +48,16 @@ export default function Player(x, y, pubSub) {
     }
   }
 
+  function _onLeave() {
+    const msg = new Message(MTypes.leave);
+    pubSub.publish(_roomChannel(), msg);
+  }
+
   return {
     render: _render,
     move: _move,
     onMessage: _onMessage,
+    onLeave: _onLeave,
   };
 }
 Player.draw = function (ctx, x, y) {

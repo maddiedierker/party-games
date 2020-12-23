@@ -25,4 +25,5 @@ pubSub.addListener("message", partyGoersController.onMessage);
 pubSub.addListener("message", player.onMessage);
 
 // input listeners
+inputManager.addUnloadEvent(player.onLeave);
 inputManager.addListener("keydown", player.move);
