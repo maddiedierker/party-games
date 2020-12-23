@@ -48,7 +48,7 @@ export default function Player(x, y, pubSub) {
     x += xMovement;
     y += yMovement;
 
-    _publishPosition();
+    _publishSelf();
   }
 
   function _onMessage(msg) {
