@@ -2,9 +2,13 @@ import Message from "@src/Message";
 import { MessageTypes } from "@src/MessageType";
 import Settings from "@src/Settings";
 import utils from "@src/utils";
+import MessageType from "./MessageType";
 
 export default function Player(x, y, pubSub) {
   const t = utils.type(self);
+  let _color = "purple";
+  let _username = "madkas";
+  const _speed = 4;
   let _room;
   _joinRoom("main");
 
@@ -24,8 +28,8 @@ export default function Player(x, y, pubSub) {
   function _publishSelf(initial = false) {
     const msg = new Message(MessageTypes.partyGoer, {
       position: { x, y },
-      color: "purple",
-      username: "madkas",
+      color: _color,
+      username: _username,
       initial,
     });
     pubSub.publish(pubSub.channelFor(_room), msg);
@@ -35,7 +39,7 @@ export default function Player(x, y, pubSub) {
   ////// API METHODS
   /////////////////////////////////////////////////////////////
   function _render(ctx) {
-    Player.draw(ctx, x, y);
+    Player.draw(ctx, x, y, _color, _username);
   }
 
   function _move(event) {
@@ -45,25 +49,30 @@ export default function Player(x, y, pubSub) {
     const yMovement = downKeys.includes(key) - upKeys.includes(key);
     if (xMovement === 0 && yMovement === 0) return;
 
-    x += xMovement;
-    y += yMovement;
+    x += xMovement * _speed;
+    y += yMovement * _speed;
 
     _publishSelf();
   }
 
   function _onMessage(msg) {
     const { message } = msg;
-    switch (message.type) {
-      case MessageTypes.partyGoer:
-        if (message.initial) _publishSelf(); // somebody joined, tell them you're here
-        break;
-      default:
-        utils.throwUnhandledMessageError(t, message.type);
-    }
+    if (message.type === MessageType.partyGoer && message.initial)
+      _publishSelf(); // somebody joined, tell them you're here
   }
 
   function _onLeave() {
     _leaveRoom();
+  }
+
+  function _setUsername(u) {
+    _username = u;
+    _publishSelf();
+  }
+
+  function _setColor(c) {
+    _color = c;
+    _publishSelf();
   }
 
   return {
@@ -71,11 +80,18 @@ export default function Player(x, y, pubSub) {
     move: _move,
     onMessage: _onMessage,
     onLeave: _onLeave,
+    setUsername: _setUsername,
+    setColor: _setColor,
   };
 }
 
-Player.draw = function (ctx, x, y) {
+Player.draw = function (ctx, x, y, color, username) {
+  const w = 10;
+  const h = 10;
+  const fontSize = 8;
   ctx.beginPath();
-  ctx.rect(x, y, 10, 10);
-  ctx.stroke();
+  ctx.strokeStyle = color;
+  ctx.strokeRect(x, y, w, h);
+  ctx.font = `${fontSize}px Courier New`;
+  ctx.fillText(username, x, y + h + fontSize);
 };

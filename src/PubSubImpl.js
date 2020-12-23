@@ -1,5 +1,6 @@
 import PubNub from "pubnub";
 import utils from "@src/utils";
+import Store from "@src/Store";
 
 export default function PubSubImpl(publishKey, subscribeKey) {
   const t = utils.type(self);
@@ -16,7 +17,7 @@ export default function PubSubImpl(publishKey, subscribeKey) {
   /////////////////////////////////////////////////////////////
   const { _uuid, _service } = (function serviceInit() {
     const _uuid = (function () {
-      const uuid = localStorage.getItem(subscribeKey + "uuid");
+      const uuid = Store.uuid.get(subscribeKey);
       if (uuid) return uuid;
       return PubNub.generateUUID();
     })();
@@ -43,8 +44,7 @@ export default function PubSubImpl(publishKey, subscribeKey) {
   }
 
   function _onMessage(msg) {
-    // you can't get messages from yourself
-    if (msg.publisher === _uuid) return;
+    if (msg.publisher === _uuid) return; // can't get messages from yourself
     _onMessageCallbacks.forEach(function (callback) {
       callback(msg);
     });

@@ -6,13 +6,21 @@ export default function PartyGoersController(pubSub) {
   let _partyGoers = {};
   const t = utils.type(this);
 
-  function _createOrUpdate(id, { position }) {
-    const existing = _partyGoers[id];
-    if (existing) {
-      existing.move(position.x, position.y);
-    } else {
-      _partyGoers[id] = new PartyGoer(id, position.x, position.y, pubSub);
+  function _createOrUpdate(id, options) {
+    const partyGoer = _partyGoers[id];
+    if (partyGoer) {
+      partyGoer.update(options);
+      return;
     }
+
+    const { position, color, username } = options;
+    _partyGoers[id] = new PartyGoer(
+      id,
+      position.x,
+      position.y,
+      color,
+      username
+    );
   }
 
   function _leave(id) {

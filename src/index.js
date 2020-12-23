@@ -6,6 +6,7 @@ import PartyGoersController from "@src/PartyGoersController";
 import Playspace from "@src/UIElements/Playspace";
 import UI from "@src/UI";
 import utils from "@src/utils";
+import Store from "@src/Store";
 
 if (!env) utils.throwError("env object is required");
 
@@ -13,6 +14,7 @@ if (!env) utils.throwError("env object is required");
 const windowManager = new WindowManager();
 const pubSub = new PubSub(env.pubPublishKey, env.pubSubscribeKey);
 const player = new Player(10, 10, pubSub);
+window.player = player;
 const partyGoersController = new PartyGoersController(pubSub);
 const playspace = new Playspace(player, partyGoersController);
 new UI("app", [playspace]);

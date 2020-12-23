@@ -1,20 +1,26 @@
 import Player from "@src/Player";
 
-export default function PartyGoer(id, x, y) {
+export default function PartyGoer(id, x, y, color, username) {
+  function _move(position) {
+    x = position.x;
+    y = position.y;
+  }
+
   /////////////////////////////////////////////////////////////
   ////// API METHODS
   /////////////////////////////////////////////////////////////
   function _render(ctx) {
-    Player.draw(ctx, x, y);
+    Player.draw(ctx, x, y, color, username);
   }
 
-  function _move(x1, y1) {
-    x = x1;
-    y = y1;
+  function _update(options) {
+    if (options.color) color = options.color;
+    if (options.username) username = options.username;
+    if (options.position) _move(options.position);
   }
 
   return {
     render: _render,
-    move: _move,
+    update: _update,
   };
 }
