@@ -4,21 +4,24 @@ import Settings from "@src/Settings";
 
 export default function Player(x, y, pubSub) {
   let _room;
-  _onJoinRoom("main");
+  _joinRoom("main");
 
-  function _roomChannel() {
-    return "room-" + _room;
+  function _joinRoom(name) {
+    _room = name;
+    pubSub.subscribe([pubSub.channelFor(_room)]);
+    _publishPosition(true);
   }
 
-  function _onJoinRoom(name) {
-    _room = name;
-    pubSub.subscribe([_roomChannel()]);
-    _publishPosition(true);
+  function _leaveRoom() {
+    const msg = new Message(MTypes.leave);
+    const channel = pubSub.channelFor(_room);
+    pubSub.publish(channel, msg);
+    pubSub.unsubscribe([channel]);
   }
 
   function _publishPosition(initial = false) {
     const msg = new Message(MTypes.position, { position: { x, y }, initial });
-    pubSub.publish(_roomChannel(), msg);
+    pubSub.publish(pubSub.channelFor(_room), msg);
   }
 
   /////////////////////////////////////////////////////////////
@@ -49,8 +52,7 @@ export default function Player(x, y, pubSub) {
   }
 
   function _onLeave() {
-    const msg = new Message(MTypes.leave);
-    pubSub.publish(_roomChannel(), msg);
+    _leaveRoom();
   }
 
   return {
@@ -60,6 +62,7 @@ export default function Player(x, y, pubSub) {
     onLeave: _onLeave,
   };
 }
+
 Player.draw = function (ctx, x, y) {
   ctx.beginPath();
   ctx.rect(x, y, 10, 10);

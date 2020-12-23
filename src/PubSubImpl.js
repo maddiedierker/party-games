@@ -72,14 +72,24 @@ export default function PubSubImpl(publishKey, subscribeKey) {
     _service.subscribe({ channels, withPresence: true });
   }
 
+  function _unsubscribe(channels) {
+    _service.unsubscribe({ channels });
+  }
+
   function _addListener(type, callback) {
     if (type === "message") _onMessageCallbacks.push(callback);
+  }
+
+  function _channelFor(roomName) {
+    return "room-" + roomName;
   }
 
   return {
     publish: _publish,
     subscribe: _subscribe,
+    unsubscribe: _unsubscribe,
     addListener: _addListener,
+    channelFor: _channelFor,
     uuid: _uuid,
   };
 }
