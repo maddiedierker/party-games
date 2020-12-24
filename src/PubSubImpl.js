@@ -62,15 +62,13 @@ export default function PubSubImpl(publishKey, subscribeKey) {
     console.log("PRESENCE", e);
   }
 
-  function _onPublish(status, response) {
-    // console.log("AFTER PUBLISH", status, response);
-  }
-
   /////////////////////////////////////////////////////////////
   ////// API METHODS
   /////////////////////////////////////////////////////////////
   function _publish(channel, message) {
-    _service.publish({ channel, message }, _onPublish);
+    _service.publish({ channel, message }, function (status, response) {
+      // console.log("AFTER PUBLISH", status, response);
+    });
   }
 
   function _subscribe(channels) {

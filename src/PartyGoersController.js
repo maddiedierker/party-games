@@ -23,7 +23,7 @@ export default function PartyGoersController() {
   }
 
   function _leave(id) {
-    delete _partyGoers[id];
+    if (_partyGoers.hasOwnProperty(id)) delete _partyGoers[id];
   }
 
   /////////////////////////////////////////////////////////////
@@ -31,9 +31,10 @@ export default function PartyGoersController() {
   /////////////////////////////////////////////////////////////
   function _onPresence(e) {
     const { action, uuid, state } = e;
-    if (action === "join" || action === "state-change") {
+    // TODO: how to handle "join" events?
+    if (action === "state-change") {
       _createOrUpdate(uuid, state);
-    } else if (action === "leave") {
+    } else if (action === "leave" || action === "timeout") {
       _leave(uuid);
     }
   }
@@ -45,8 +46,8 @@ export default function PartyGoersController() {
   }
 
   function _bulkCreateOrUpdate(partyGoers) {
-    Object.keys(partyGoers).forEach(function (uuid) {
-      _createOrUpdate(uuid, partyGoers[uuid]);
+    partyGoers.forEach(function (partyGoer) {
+      _createOrUpdate(partyGoer.uuid, partyGoer.state);
     });
   }
 

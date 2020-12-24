@@ -7,14 +7,16 @@ export default function Room(name, player, pubSub) {
   (function _join() {
     const c = [_channel()];
     pubSub.subscribe(c);
+    // tell party goers you're here
     player.broadcastState();
+    // see who else is here
     pubSub.hereNow(c, function (status, response) {
       // filter out self
-      let partyGoers = {};
-      response.channels[_channel()].occupants.forEach(function (occupant) {
-        if (occupant.uuid !== pubSub.uuid)
-          partyGoers[occupant.uuid] = occupant.state;
-      });
+      const partyGoers = response.channels[_channel()].occupants.filter(
+        function (occupant) {
+          return occupant.uuid !== pubSub.uuid;
+        }
+      );
       _partyGoersController.bulkCreateOrUpdate(partyGoers);
 
       console.log("WHO'S HERE", status, response);
@@ -41,10 +43,15 @@ export default function Room(name, player, pubSub) {
     _partyGoersController.renderAll(ctx);
   }
 
+  function _leave() {
+    pubSub.unsubscribe([_channel()]);
+  }
+
   return {
     channel: _channel,
     onPresence: _onPresence,
     render: _render,
+    leave: _leave,
   };
 }
 
