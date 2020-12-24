@@ -1,11 +1,11 @@
 import env from "/.env";
-import PubSub from "@src/PubSub";
+import utils from "@src/utils";
 import WindowManager from "@src/WindowManager";
+import PubSub from "@src/PubSub";
 import Player from "@src/Player";
+import Room from "@src/Room";
 import Playspace from "@src/UIElements/Playspace";
 import UI from "@src/UI";
-import utils from "@src/utils";
-import Room from "@src/Room";
 
 if (!env) utils.throwError("env object is required");
 

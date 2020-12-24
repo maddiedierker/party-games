@@ -14,9 +14,10 @@ export default function PartyGoer(id, x, y, color, username) {
   }
 
   function _update(options) {
-    if (options.color) color = options.color;
-    if (options.username) username = options.username;
-    if (options.position) _move(options.position);
+    const { color: c, username: u, position: pos } = options;
+    if (c) color = c;
+    if (u) username = u;
+    if (pos) _move(pos);
   }
 
   return {

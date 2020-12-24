@@ -1,19 +1,19 @@
 import Settings from "@src/Settings";
 
+const PlayerDefaults = {
+  username: "unknown",
+  speed: 5,
+  color: "yellow",
+};
+
 export default function Player() {
-  let _state = {
-    username: "unknown",
-    speed: 5,
-    color: "yellow",
-  };
+  let _state = { ...PlayerDefaults };
   let _setStateCallbacks = [];
 
-  function _setState(newState) {
-    _state = {
-      ..._state,
-      ...newState,
-    };
-    _broadcastState();
+  function _broadcastState() {
+    _setStateCallbacks.forEach(function (callback) {
+      callback(_state);
+    });
   }
 
   /////////////////////////////////////////////////////////////
@@ -31,27 +31,20 @@ export default function Player() {
     _setStateCallbacks.push(callback);
   }
 
-  function _broadcastState() {
-    _setStateCallbacks.forEach(function (callback) {
-      callback(_state);
-    });
-  }
-
   function _render(ctx) {
     const { position, color, username } = _state;
     if (!position || !position.x || !position.y || !color || !username) return;
     Player.draw(ctx, position.x, position.y, color, username);
   }
 
-  function _move(event) {
+  function _move({ key }) {
     const { position, speed } = _state;
-    if (!position || !position.x || !position.y) return;
-    const { key } = event;
+    if (!position) return;
+
     const { rightKeys, leftKeys, downKeys, upKeys } = Settings;
     const xMovement = rightKeys.includes(key) - leftKeys.includes(key);
     const yMovement = downKeys.includes(key) - upKeys.includes(key);
     if (xMovement === 0 && yMovement === 0) return;
-
     _setState({
       position: {
         x: position.x + xMovement * speed,
@@ -71,11 +64,34 @@ export default function Player() {
   return {
     setState: _setState,
     registerSetStateCallback: _registerSetStateCallback,
-    broadcastState: _broadcastState,
     render: _render,
     move: _move,
     setUsername: _setUsername,
     setColor: _setColor,
+    position: {
+      get: function () {
+        return _state.position;
+      },
+      set: function (position) {
+        _setState({ position });
+      },
+    },
+    username: {
+      get: function () {
+        return _state.username;
+      },
+      set: function (username) {
+        _setState({ username });
+      },
+    },
+    color: {
+      get: function () {
+        return _state.color;
+      },
+      set: function (color) {
+        _setState({ color });
+      },
+    },
   };
 }
 

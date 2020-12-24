@@ -25,6 +25,12 @@ export default function PartyGoersController() {
     );
   }
 
+  function _bulkCreateOrUpdate(partyGoers) {
+    partyGoers.forEach(function (partyGoer) {
+      _createOrUpdate(partyGoer.uuid, partyGoer.state);
+    });
+  }
+
   function _leave(id) {
     if (_partyGoers.hasOwnProperty(id)) delete _partyGoers[id];
   }
@@ -35,16 +41,10 @@ export default function PartyGoersController() {
     });
   }
 
-  function _bulkCreateOrUpdate(partyGoers) {
-    partyGoers.forEach(function (partyGoer) {
-      _createOrUpdate(partyGoer.uuid, partyGoer.state);
-    });
-  }
-
   return {
     createOrUpdate: _createOrUpdate,
+    bulkCreateOrUpdate: _bulkCreateOrUpdate,
     leave: _leave,
     renderAll: _renderAll,
-    bulkCreateOrUpdate: _bulkCreateOrUpdate,
   };
 }
