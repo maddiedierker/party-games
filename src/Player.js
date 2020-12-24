@@ -1,11 +1,10 @@
 import Settings from "@src/Settings";
 
-export default function Player(x, y) {
+export default function Player() {
   let _state = {
-    position: { x, y },
-    color: "purple",
-    username: "madkas",
-    speed: 4,
+    username: "unknown",
+    speed: 5,
+    color: "yellow",
   };
   let _setStateCallbacks = [];
 
@@ -20,6 +19,14 @@ export default function Player(x, y) {
   /////////////////////////////////////////////////////////////
   ////// API METHODS
   /////////////////////////////////////////////////////////////
+  function _setState(newState) {
+    _state = {
+      ..._state,
+      ...newState,
+    };
+    _broadcastState();
+  }
+
   function _registerSetStateCallback(callback) {
     _setStateCallbacks.push(callback);
   }
@@ -32,17 +39,19 @@ export default function Player(x, y) {
 
   function _render(ctx) {
     const { position, color, username } = _state;
+    if (!position || !position.x || !position.y || !color || !username) return;
     Player.draw(ctx, position.x, position.y, color, username);
   }
 
   function _move(event) {
+    const { position, speed } = _state;
+    if (!position || !position.x || !position.y) return;
     const { key } = event;
     const { rightKeys, leftKeys, downKeys, upKeys } = Settings;
     const xMovement = rightKeys.includes(key) - leftKeys.includes(key);
     const yMovement = downKeys.includes(key) - upKeys.includes(key);
     if (xMovement === 0 && yMovement === 0) return;
 
-    const { position, speed } = _state;
     _setState({
       position: {
         x: position.x + xMovement * speed,
@@ -60,6 +69,7 @@ export default function Player(x, y) {
   }
 
   return {
+    setState: _setState,
     registerSetStateCallback: _registerSetStateCallback,
     broadcastState: _broadcastState,
     render: _render,

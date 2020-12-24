@@ -12,7 +12,7 @@ if (!env) utils.throwError("env object is required");
 // initialize everyone
 const windowManager = new WindowManager();
 const pubSub = new PubSub(env.pubPublishKey, env.pubSubscribeKey);
-const player = new Player(10, 10);
+const player = new Player();
 const room = new Room("main", player, pubSub);
 const playspace = new Playspace(room);
 new UI("app", [playspace]);

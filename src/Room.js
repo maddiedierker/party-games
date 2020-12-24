@@ -1,5 +1,9 @@
 import PartyGoersController from "@src/PartyGoersController";
 
+const RoomDefaults = {
+  position: { x: 20, y: 15 },
+};
+
 export default function Room(name, player, pubSub) {
   player.registerSetStateCallback(_onSetState);
   let _partyGoersController = new PartyGoersController();
@@ -7,19 +11,20 @@ export default function Room(name, player, pubSub) {
   (function _join() {
     const c = [_channel()];
     pubSub.subscribe(c);
-    // tell party goers you're here
-    player.broadcastState();
-    // see who else is here
+    pubSub.getState(c, function (status, response) {
+      if (!response) return;
+      player.setState({ ...RoomDefaults, ...response.channels[_channel()] });
+    });
     pubSub.hereNow(c, function (status, response) {
-      // filter out self
+      // TODO: retry on failure
+      if (!response) return;
+
       const partyGoers = response.channels[_channel()].occupants.filter(
         function (occupant) {
           return occupant.uuid !== pubSub.uuid;
         }
       );
       _partyGoersController.bulkCreateOrUpdate(partyGoers);
-
-      console.log("WHO'S HERE", status, response);
     });
   })();
 

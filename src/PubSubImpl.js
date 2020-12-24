@@ -92,6 +92,10 @@ export default function PubSubImpl(publishKey, subscribeKey) {
     );
   }
 
+  function _getState(channels, callback) {
+    return _service.getState({ channels }, callback);
+  }
+
   function _setState(channels, state, callback) {
     _service.setState({ channels, state }, function (status, response) {
       // TODO: retry on failure
@@ -117,6 +121,7 @@ export default function PubSubImpl(publishKey, subscribeKey) {
     subscribe: _subscribe,
     unsubscribe: _unsubscribe,
     hereNow: _hereNow,
+    getState: _getState,
     setState: _setState,
     addListener: _addListener,
     uuid: _uuid,
