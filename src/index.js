@@ -22,7 +22,6 @@ pubSub.addListener("presence", room.onPresence);
 
 // input listeners
 windowManager.addEventListener("keydown", player.move);
-windowManager.addUnloadCallback(room.leave);
 
 // debug stuff
 window.player = player;

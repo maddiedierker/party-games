@@ -5,6 +5,9 @@ export default function PartyGoersController() {
   let _partyGoers = {};
   const t = utils.type(this);
 
+  /////////////////////////////////////////////////////////////
+  ////// API METHODS
+  /////////////////////////////////////////////////////////////
   function _createOrUpdate(id, options) {
     const partyGoer = _partyGoers[id];
     if (partyGoer) {
@@ -26,19 +29,6 @@ export default function PartyGoersController() {
     if (_partyGoers.hasOwnProperty(id)) delete _partyGoers[id];
   }
 
-  /////////////////////////////////////////////////////////////
-  ////// API METHODS
-  /////////////////////////////////////////////////////////////
-  function _onPresence(e) {
-    const { action, uuid, state } = e;
-    // TODO: how to handle "join" events?
-    if (action === "state-change") {
-      _createOrUpdate(uuid, state);
-    } else if (action === "leave" || action === "timeout") {
-      _leave(uuid);
-    }
-  }
-
   function _renderAll(ctx) {
     Object.values(_partyGoers).forEach(function (partyGoer) {
       partyGoer.render(ctx);
@@ -52,7 +42,8 @@ export default function PartyGoersController() {
   }
 
   return {
-    onPresence: _onPresence,
+    createOrUpdate: _createOrUpdate,
+    leave: _leave,
     renderAll: _renderAll,
     bulkCreateOrUpdate: _bulkCreateOrUpdate,
   };

@@ -8,20 +8,24 @@ export default function Room(name, player, pubSub) {
   player.registerSetStateCallback(_onSetState);
   let _partyGoersController = new PartyGoersController();
 
-  (function _join() {
+  (function _init() {
     const c = [_channel()];
+
+    // subscribe to room channel
     pubSub.subscribe(c);
+
+    // load any existing state for player
     pubSub.getState(c, function (status, response) {
       if (!response) return;
       player.setState({ ...RoomDefaults, ...response.channels[_channel()] });
     });
-    pubSub.hereNow(c, function (status, response) {
-      // TODO: retry on failure
-      if (!response) return;
 
+    // load party goers
+    pubSub.hereNow(c, function (status, response) {
+      if (!response) return;
       const partyGoers = response.channels[_channel()].occupants.filter(
-        function (occupant) {
-          return occupant.uuid !== pubSub.uuid;
+        function (o) {
+          return o.uuid !== pubSub.uuid;
         }
       );
       _partyGoersController.bulkCreateOrUpdate(partyGoers);
@@ -32,15 +36,21 @@ export default function Room(name, player, pubSub) {
     pubSub.setState([_channel()], state);
   }
 
-  /////////////////////////////////////////////////////////////
-  ////// API METHODS
-  /////////////////////////////////////////////////////////////
   function _channel() {
     return Room.channelFor(name);
   }
 
+  /////////////////////////////////////////////////////////////
+  ////// API METHODS
+  /////////////////////////////////////////////////////////////
   function _onPresence(e) {
-    _partyGoersController.onPresence(e);
+    const { action, uuid, state } = e;
+
+    if (action === "state-change") {
+      _partyGoersController.createOrUpdate(uuid, state);
+    } else if (action === "leave" || action === "timeout") {
+      _partyGoersController.leave(uuid);
+    }
   }
 
   function _render(ctx) {
@@ -49,11 +59,10 @@ export default function Room(name, player, pubSub) {
   }
 
   function _leave() {
-    pubSub.unsubscribe([_channel()]);
+    pubSub.unsubscribe({ channels: [_channel()] });
   }
 
   return {
-    channel: _channel,
     onPresence: _onPresence,
     render: _render,
     leave: _leave,

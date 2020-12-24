@@ -81,10 +81,7 @@ export default function PubSubImpl(publishKey, subscribeKey) {
 
   function _hereNow(channels, callback) {
     return _service.hereNow(
-      {
-        channels,
-        includeState: true,
-      },
+      { channels, includeState: true },
       function (status, response) {
         // TODO: retry on failure
         if (callback) callback(status, response);
