@@ -5,6 +5,7 @@ import Store from "@src/Store";
 export default function PubSubImpl(publishKey, subscribeKey) {
   const t = utils.type(self);
   let _onMessageCallbacks = [];
+  let _onPresenceCallbacks = [];
 
   if (!publishKey) {
     utils.throwStartupError(t, "publishKey is missing");
@@ -48,10 +49,16 @@ export default function PubSubImpl(publishKey, subscribeKey) {
     _onMessageCallbacks.forEach(function (callback) {
       callback(msg);
     });
+
     // console.log("MESSAGE", msg);
   }
 
   function _onPresenceEvent(e) {
+    if (e.uuid === _uuid) return; // can't get events from yourself
+    _onPresenceCallbacks.forEach(function (callback) {
+      callback(e);
+    });
+
     console.log("PRESENCE", e);
   }
 
@@ -74,20 +81,46 @@ export default function PubSubImpl(publishKey, subscribeKey) {
     _service.unsubscribe({ channels });
   }
 
-  function _addListener(type, callback) {
-    if (type === "message") _onMessageCallbacks.push(callback);
+  function _hereNow(channels, callback) {
+    return _service.hereNow(
+      {
+        channels,
+        includeState: true,
+      },
+      function (status, response) {
+        // TODO: retry on failure
+        if (callback) callback(status, response);
+      }
+    );
   }
 
-  function _channelFor(roomName) {
-    return "room-" + roomName;
+  function _setState(channels, state, callback) {
+    _service.setState({ channels, state }, function (status, response) {
+      // TODO: retry on failure
+      if (callback) callback(status, response);
+    });
+  }
+
+  function _addListener(type, callback) {
+    switch (type) {
+      case "message":
+        _onMessageCallbacks.push(callback);
+        break;
+      case "presence":
+        _onPresenceCallbacks.push(callback);
+        break;
+      default:
+        utils.throwUnhandledMessageError("PubSub._addListener", type);
+    }
   }
 
   return {
     publish: _publish,
     subscribe: _subscribe,
     unsubscribe: _unsubscribe,
+    hereNow: _hereNow,
+    setState: _setState,
     addListener: _addListener,
-    channelFor: _channelFor,
     uuid: _uuid,
   };
 }

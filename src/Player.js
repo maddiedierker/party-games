@@ -1,45 +1,38 @@
-import Message from "@src/Message";
-import { MessageTypes } from "@src/MessageType";
 import Settings from "@src/Settings";
-import utils from "@src/utils";
-import MessageType from "./MessageType";
 
-export default function Player(x, y, pubSub) {
-  const t = utils.type(self);
-  let _color = "purple";
-  let _username = "madkas";
-  const _speed = 4;
-  let _room;
-  _joinRoom("main");
+export default function Player(x, y) {
+  let _state = {
+    position: { x, y },
+    color: "purple",
+    username: "madkas",
+    speed: 4,
+  };
+  let _setStateCallbacks = [];
 
-  function _joinRoom(name) {
-    _room = name;
-    pubSub.subscribe([pubSub.channelFor(_room)]);
-    _publishSelf(true);
-  }
-
-  function _leaveRoom() {
-    const msg = new Message(MessageTypes.leave);
-    const channel = pubSub.channelFor(_room);
-    pubSub.publish(channel, msg);
-    pubSub.unsubscribe([channel]);
-  }
-
-  function _publishSelf(initial = false) {
-    const msg = new Message(MessageTypes.partyGoer, {
-      position: { x, y },
-      color: _color,
-      username: _username,
-      initial,
-    });
-    pubSub.publish(pubSub.channelFor(_room), msg);
+  function _setState(newState) {
+    _state = {
+      ..._state,
+      ...newState,
+    };
+    _broadcastState();
   }
 
   /////////////////////////////////////////////////////////////
   ////// API METHODS
   /////////////////////////////////////////////////////////////
+  function _registerSetStateCallback(callback) {
+    _setStateCallbacks.push(callback);
+  }
+
+  function _broadcastState() {
+    _setStateCallbacks.forEach(function (callback) {
+      callback(_state);
+    });
+  }
+
   function _render(ctx) {
-    Player.draw(ctx, x, y, _color, _username);
+    const { position, color, username } = _state;
+    Player.draw(ctx, position.x, position.y, color, username);
   }
 
   function _move(event) {
@@ -49,37 +42,28 @@ export default function Player(x, y, pubSub) {
     const yMovement = downKeys.includes(key) - upKeys.includes(key);
     if (xMovement === 0 && yMovement === 0) return;
 
-    x += xMovement * _speed;
-    y += yMovement * _speed;
-
-    _publishSelf();
+    const { position, speed } = _state;
+    _setState({
+      position: {
+        x: position.x + xMovement * speed,
+        y: position.y + yMovement * speed,
+      },
+    });
   }
 
-  function _onMessage(msg) {
-    const { message } = msg;
-    if (message.type === MessageTypes.partyGoer && message.initial)
-      _publishSelf(); // somebody joined, tell them you're here
+  function _setUsername(username) {
+    _setState({ username });
   }
 
-  function _onLeave() {
-    _leaveRoom();
-  }
-
-  function _setUsername(u) {
-    _username = u;
-    _publishSelf();
-  }
-
-  function _setColor(c) {
-    _color = c;
-    _publishSelf();
+  function _setColor(color) {
+    _setState({ color });
   }
 
   return {
+    registerSetStateCallback: _registerSetStateCallback,
+    broadcastState: _broadcastState,
     render: _render,
     move: _move,
-    onMessage: _onMessage,
-    onLeave: _onLeave,
     setUsername: _setUsername,
     setColor: _setColor,
   };

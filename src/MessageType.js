@@ -1,28 +1,13 @@
-import utils from "@src/utils";
+// NOTHING IS CURRENTLY USING THESE TYPES.
+// I DON'T WANT TO DELETE THEM YET. EXAMPLE USAGE BELOW.
 
 export const MessageTypes = {
-  partyGoer: "partyGoer",
-  leave: "leave",
+  example: "example",
 };
 
-function MessageType() {}
-
-MessageType.partyGoer = function (options) {
-  ["position", "color", "username"].forEach(function (option) {
-    if (!options[option])
-      utils.throwStartupError("MessageType.partyGoer", `${option} is missing`);
-  });
-
+export default function MessageType() {}
+MessageType.example = function (options) {
   return {
-    type: MessageTypes.partyGoer,
-    ...options,
+    type: MessageTypes.example,
   };
 };
-
-MessageType.leave = function () {
-  return {
-    type: MessageTypes.leave,
-  };
-};
-
-export default MessageType;

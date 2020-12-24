@@ -1,8 +1,7 @@
-import { MessageTypes } from "@src/MessageType";
 import PartyGoer from "@src/PartyGoer";
 import utils from "@src/utils";
 
-export default function PartyGoersController(pubSub) {
+export default function PartyGoersController() {
   let _partyGoers = {};
   const t = utils.type(this);
 
@@ -30,17 +29,12 @@ export default function PartyGoersController(pubSub) {
   /////////////////////////////////////////////////////////////
   ////// API METHODS
   /////////////////////////////////////////////////////////////
-  function _onMessage(msg) {
-    const { publisher, message } = msg;
-    switch (message.type) {
-      case MessageTypes.partyGoer:
-        _createOrUpdate(publisher, message);
-        break;
-      case MessageTypes.leave:
-        _leave(publisher);
-        break;
-      default:
-        utils.throwUnhandledMessageError(t, message.type);
+  function _onPresence(e) {
+    const { action, uuid, state } = e;
+    if (action === "join" || action === "state-change") {
+      _createOrUpdate(uuid, state);
+    } else if (action === "leave") {
+      _leave(uuid);
     }
   }
 
@@ -50,8 +44,15 @@ export default function PartyGoersController(pubSub) {
     });
   }
 
+  function _bulkCreateOrUpdate(partyGoers) {
+    Object.keys(partyGoers).forEach(function (uuid) {
+      _createOrUpdate(uuid, partyGoers[uuid]);
+    });
+  }
+
   return {
-    onMessage: _onMessage,
+    onPresence: _onPresence,
     renderAll: _renderAll,
+    bulkCreateOrUpdate: _bulkCreateOrUpdate,
   };
 }

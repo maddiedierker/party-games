@@ -1,3 +1,6 @@
+// NOTHING IS CURRENTLY USING THIS FUNCTION.
+// I DON'T WANT TO DELETE IT YET.
+
 import MessageType from "@src/MessageType";
 import utils from "@src/utils";
 

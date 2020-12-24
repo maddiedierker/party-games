@@ -2,7 +2,7 @@ import Settings from "@src/Settings";
 import UIElement from "@src/UIElement";
 import style from "@src/style.css";
 
-export default function Playspace(player, partyGoersController) {
+export default function Playspace(room) {
   const _canvas = document.createElement("canvas");
   const _ctx = _canvas.getContext("2d");
 
@@ -14,8 +14,7 @@ export default function Playspace(player, partyGoersController) {
 
   (function render() {
     clear();
-    player.render(_ctx);
-    partyGoersController.renderAll(_ctx);
+    room.render(_ctx);
 
     requestAnimationFrame(render);
   })();
