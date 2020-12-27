@@ -114,7 +114,7 @@ export default function PubSub(publishKey, subscribeKey) {
   }
 
   return {
-    publish: _publish,
+    // publish: _publish, // unused
     subscribe: _subscribe,
     unsubscribe: _unsubscribe,
     hereNow: _hereNow,
