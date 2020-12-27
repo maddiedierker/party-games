@@ -1,9 +1,7 @@
 import PartyGoer from "@src/PartyGoer";
-import utils from "@src/utils";
 
 export default function PartyGoersController() {
   let _partyGoers = {};
-  const t = utils.type(this);
 
   /////////////////////////////////////////////////////////////
   ////// API METHODS
@@ -16,13 +14,7 @@ export default function PartyGoersController() {
     }
 
     const { position, color, username } = options;
-    _partyGoers[id] = new PartyGoer(
-      id,
-      position.x,
-      position.y,
-      color,
-      username
-    );
+    _partyGoers[id] = new PartyGoer(position, color, username);
   }
 
   function _bulkCreateOrUpdate(partyGoers) {

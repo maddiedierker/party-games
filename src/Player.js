@@ -1,13 +1,7 @@
 import Settings from "@src/Settings";
 
-const PlayerDefaults = {
-  username: "unknown",
-  speed: 5,
-  color: "yellow",
-};
-
 export default function Player() {
-  let _state = { ...PlayerDefaults };
+  let _state = { ...Player.defaults };
   let _setStateCallbacks = [];
 
   function _broadcastState() {
@@ -33,7 +27,7 @@ export default function Player() {
 
   function _render(ctx) {
     const { position, color, username } = _state;
-    if (!position || !position.x || !position.y || !color || !username) return;
+    if (!position || !color || !username) return;
     Player.draw(ctx, position.x, position.y, color, username);
   }
 
@@ -45,6 +39,9 @@ export default function Player() {
     const xMovement = rightKeys.includes(key) - leftKeys.includes(key);
     const yMovement = downKeys.includes(key) - upKeys.includes(key);
     if (xMovement === 0 && yMovement === 0) return;
+
+    // TODO: check for collisions
+
     _setState({
       position: {
         x: position.x + xMovement * speed,
@@ -53,21 +50,11 @@ export default function Player() {
     });
   }
 
-  function _setUsername(username) {
-    _setState({ username });
-  }
-
-  function _setColor(color) {
-    _setState({ color });
-  }
-
   return {
     setState: _setState,
     registerSetStateCallback: _registerSetStateCallback,
     render: _render,
     move: _move,
-    setUsername: _setUsername,
-    setColor: _setColor,
     position: {
       get: function () {
         return _state.position;
@@ -104,4 +91,10 @@ Player.draw = function (ctx, x, y, color, username) {
   ctx.strokeRect(x, y, w, h);
   ctx.font = `${fontSize}px Courier New`;
   ctx.fillText(username, x, y + h + fontSize);
+};
+
+Player.defaults = {
+  username: "unknown",
+  speed: 5,
+  color: "yellow",
 };

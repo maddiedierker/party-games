@@ -1,23 +1,31 @@
 import Player from "@src/Player";
 
-export default function PartyGoer(id, x, y, color, username) {
-  function _move(position) {
-    x = position.x;
-    y = position.y;
+export default function PartyGoer(position, color, username) {
+  let _state = { ...Player.defaults };
+  _setState({ position, color, username });
+
+  function _setState(newState) {
+    _state = {
+      ..._state,
+      ...newState,
+    };
   }
 
   /////////////////////////////////////////////////////////////
   ////// API METHODS
   /////////////////////////////////////////////////////////////
   function _render(ctx) {
-    Player.draw(ctx, x, y, color, username);
+    const { position } = _state;
+    Player.draw(ctx, position.x, position.y, color, username);
   }
 
   function _update(options) {
     const { color: c, username: u, position: pos } = options;
-    if (c) color = c;
-    if (u) username = u;
-    if (pos) _move(pos);
+    let newState = {};
+    if (c) newState.color = c;
+    if (u) newState.username = u;
+    if (pos) newState.position = pos;
+    _setState(newState);
   }
 
   return {

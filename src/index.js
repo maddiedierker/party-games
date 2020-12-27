@@ -1,13 +1,14 @@
 import env from "/.env";
 import utils from "@src/utils";
+if (!env) utils.throwError("env object is required");
+
 import WindowManager from "@src/WindowManager";
 import PubSub from "@src/PubSub";
 import Player from "@src/Player";
 import Room from "@src/Room";
 import Playspace from "@src/UIElements/Playspace";
 import UI from "@src/UI";
-
-if (!env) utils.throwError("env object is required");
+import Settings from "@src/Settings";
 
 // initialize everyone
 const windowManager = new WindowManager();
@@ -26,4 +27,5 @@ windowManager.addEventListener("keydown", player.move);
 // debug stuff
 window.player = player;
 window.room = room;
+window.settings = Settings;
 console.log(pubSub.uuid, "-- it me");
