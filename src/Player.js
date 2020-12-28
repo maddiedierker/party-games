@@ -1,13 +1,41 @@
+import Collider, { ColliderType } from "@src/Collider";
 import Settings from "@src/Settings";
+import utils from "@src/utils";
+
+let _instantiated = false;
 
 export default function Player() {
+  if (_instantiated) throw new Error("Player has already been instantiated");
+  _instantiated = true;
+
   let _state = { ...Player.defaults };
   let _setStateCallbacks = [];
+  _setState({
+    collider: new Collider(
+      ColliderType.player,
+      ColliderType.player,
+      _getPoints
+    ),
+  });
 
   function _broadcastState() {
+    // some state shouldn't be broadcast ;)
+    const s = { ..._state };
+    delete s.collider;
+
     _setStateCallbacks.forEach(function (callback) {
-      callback(_state);
+      callback(s);
     });
+  }
+
+  function _getPoints(pos, width, height) {
+    if (pos || width || height) {
+      return utils.getSquarePoints(pos.x, pos.y, width, height);
+    }
+
+    const { position, w, h } = _state;
+    if (!position) return;
+    return utils.getSquarePoints(position.x, position.y, w, h);
   }
 
   /////////////////////////////////////////////////////////////
@@ -26,13 +54,13 @@ export default function Player() {
   }
 
   function _render(ctx) {
-    const { position, color, username } = _state;
-    if (!position || !color || !username) return;
-    Player.draw(ctx, position.x, position.y, color, username);
+    const { position, color, username, w, h } = _state;
+    if (!position) return; // might not have a position on first render
+    Player.draw(ctx, position.x, position.y, w, h, color, username);
   }
 
   function _move({ key }) {
-    const { position, speed } = _state;
+    const { position, w, h, speed } = _state;
     if (!position) return;
 
     const { rightKeys, leftKeys, downKeys, upKeys } = Settings;
@@ -41,50 +69,48 @@ export default function Player() {
     if (xMovement === 0 && yMovement === 0) return;
 
     // TODO: check for collisions
+    const newX = position.x + xMovement * speed;
+    const newY = position.y + yMovement * speed;
+    const points = _getPoints({ x: newX, y: newY }, w, h);
+    const collisions = _state.collider.getCollisions(points);
+    console.log(collisions);
 
-    _setState({
-      position: {
-        x: position.x + xMovement * speed,
-        y: position.y + yMovement * speed,
-      },
-    });
+    if (collisions.length === 0) {
+      _setState({
+        position: { x: newX, y: newY },
+      });
+    }
   }
 
   return {
+    collider: _state.collider,
     setState: _setState,
     registerSetStateCallback: _registerSetStateCallback,
     render: _render,
     move: _move,
-    position: {
-      get: function () {
-        return _state.position;
-      },
-      set: function (position) {
-        _setState({ position });
-      },
+    // debug stuff
+    getPosition: function () {
+      return _state.position;
     },
-    username: {
-      get: function () {
-        return _state.username;
-      },
-      set: function (username) {
-        _setState({ username });
-      },
+    setPosition: function (position) {
+      _setState({ position });
     },
-    color: {
-      get: function () {
-        return _state.color;
-      },
-      set: function (color) {
-        _setState({ color });
-      },
+    getUsername: function () {
+      return _state.username;
+    },
+    setUsername: function (username) {
+      _setState({ username });
+    },
+    getColor: function () {
+      return _state.color;
+    },
+    setColor: function (color) {
+      _setState({ color });
     },
   };
 }
 
-Player.draw = function (ctx, x, y, color, username) {
-  const w = 10;
-  const h = 10;
+Player.draw = function (ctx, x, y, w, h, color, username) {
   const fontSize = 8;
   ctx.beginPath();
   ctx.strokeStyle = color;
@@ -97,4 +123,6 @@ Player.defaults = {
   username: "unknown",
   speed: 5,
   color: "yellow",
+  w: 10,
+  h: 10,
 };

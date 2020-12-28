@@ -1,8 +1,19 @@
 import Player from "@src/Player";
+import Collider, { ColliderType } from "@src/Collider";
+import utils from "@src/utils";
 
-export default function PartyGoer(position, color, username) {
+export default function PartyGoer(id, position, color, username) {
   let _state = { ...Player.defaults };
-  _setState({ position, color, username });
+  _setState({
+    position,
+    color,
+    username,
+    collider: new Collider(
+      `${ColliderType.partyGoer}/${id}`,
+      ColliderType.partyGoer,
+      _getPoints
+    ),
+  });
 
   function _setState(newState) {
     _state = {
@@ -11,12 +22,17 @@ export default function PartyGoer(position, color, username) {
     };
   }
 
+  function _getPoints() {
+    const { position, w, h } = _state;
+    return utils.getSquarePoints(position.x, position.y, w, h);
+  }
+
   /////////////////////////////////////////////////////////////
   ////// API METHODS
   /////////////////////////////////////////////////////////////
   function _render(ctx) {
-    const { position } = _state;
-    Player.draw(ctx, position.x, position.y, color, username);
+    const { position, w, h, color, username } = _state;
+    Player.draw(ctx, position.x, position.y, w, h, color, username);
   }
 
   function _update(options) {

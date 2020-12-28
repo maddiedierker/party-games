@@ -41,7 +41,7 @@ export default function PubSub(publishKey, subscribeKey) {
   ////// SERVICE LISTENERS
   /////////////////////////////////////////////////////////////
   function _onStatusEvent(e) {
-    console.log("STATUS", e);
+    // console.log("STATUS", e);
   }
 
   function _onMessage(msg) {
@@ -59,7 +59,7 @@ export default function PubSub(publishKey, subscribeKey) {
       callback(e);
     });
 
-    console.log("PRESENCE", e);
+    // console.log("PRESENCE", e);
   }
 
   /////////////////////////////////////////////////////////////

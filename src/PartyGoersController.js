@@ -14,7 +14,7 @@ export default function PartyGoersController() {
     }
 
     const { position, color, username } = options;
-    _partyGoers[id] = new PartyGoer(position, color, username);
+    _partyGoers[id] = new PartyGoer(id, position, color, username);
   }
 
   function _bulkCreateOrUpdate(partyGoers) {

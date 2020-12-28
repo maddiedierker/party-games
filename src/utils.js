@@ -14,9 +14,36 @@ function throwUnhandledMessageError(type, msgType) {
   throw new Error(`${type} unhandled message type '${msgType}'`);
 }
 
+function getSquarePoints(x, y, w, h) {
+  function _e(msg) {
+    throwError("utils.getSquarePoints: " + msg);
+  }
+
+  if (!x || !y) _e("x and y required");
+  if (!w || !h) _e("w and h required");
+
+  return [
+    [x, y],
+    [x + w, y],
+    [x + w, y + h],
+    [x, y + h],
+  ];
+}
+
+function withinSquare(point, squarePoints) {
+  return (
+    point[0] >= squarePoints[0][0] &&
+    point[0] <= squarePoints[1][0] &&
+    point[1] >= squarePoints[0][1] &&
+    point[1] <= squarePoints[2][1]
+  );
+}
+
 export default {
   type,
   throwError,
   throwStartupError,
   throwUnhandledMessageError,
+  getSquarePoints,
+  withinSquare,
 };
