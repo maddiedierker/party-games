@@ -102,9 +102,10 @@ export default function PubSub(publishKey, subscribeKey) {
 
   function _addListener(type, callback) {
     switch (type) {
-      case "message":
-        _onMessageCallbacks.push(callback);
-        break;
+      // unused
+      // case "message":
+      //   _onMessageCallbacks.push(callback);
+      //   break;
       case "presence":
         _onPresenceCallbacks.push(callback);
         break;
