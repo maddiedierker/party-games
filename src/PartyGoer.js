@@ -4,15 +4,12 @@ import utils from "@src/utils";
 
 export default function PartyGoer(id, position, color, username) {
   let _state = { ...Player.defaults };
+  const cType = ColliderType.partyGoer;
   _setState({
     position,
     color,
     username,
-    collider: new Collider(
-      `${ColliderType.partyGoer}/${id}`,
-      ColliderType.partyGoer,
-      _getPoints
-    ),
+    collider: new Collider(`${cType}/${id}`, cType, _getPoints),
   });
 
   function _setState(newState) {
@@ -24,7 +21,7 @@ export default function PartyGoer(id, position, color, username) {
 
   function _getPoints() {
     const { position, w, h } = _state;
-    return utils.getSquarePoints(position.x, position.y, w, h);
+    return utils.paddedGetSquarePoints(position.x, position.y, w, h);
   }
 
   /////////////////////////////////////////////////////////////

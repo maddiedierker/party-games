@@ -30,6 +30,15 @@ function getSquarePoints(x, y, w, h) {
   ];
 }
 
+function paddedGetSquarePoints(x, y, w, h, padding = 2) {
+  return getSquarePoints(
+    x + padding,
+    y + padding,
+    w - padding * 2,
+    h - padding * 2
+  );
+}
+
 function withinSquare(point, squarePoints) {
   return (
     point[0] >= squarePoints[0][0] &&
@@ -44,6 +53,6 @@ export default {
   throwError,
   throwStartupError,
   throwUnhandledMessageError,
-  getSquarePoints,
+  paddedGetSquarePoints,
   withinSquare,
 };

@@ -10,12 +10,9 @@ export default function Player() {
 
   let _state = { ...Player.defaults };
   let _setStateCallbacks = [];
+  const cType = ColliderType.player;
   _setState({
-    collider: new Collider(
-      ColliderType.player,
-      ColliderType.player,
-      _getPoints
-    ),
+    collider: new Collider(cType, cType, _getPoints),
   });
 
   function _broadcastState() {
@@ -30,12 +27,12 @@ export default function Player() {
 
   function _getPoints(pos, width, height) {
     if (pos || width || height) {
-      return utils.getSquarePoints(pos.x, pos.y, width, height);
+      return utils.paddedGetSquarePoints(pos.x, pos.y, width, height);
     }
 
     const { position, w, h } = _state;
     if (!position) return;
-    return utils.getSquarePoints(position.x, position.y, w, h);
+    return utils.paddedGetSquarePoints(position.x, position.y, w, h);
   }
 
   /////////////////////////////////////////////////////////////
@@ -73,12 +70,13 @@ export default function Player() {
     const newY = position.y + yMovement * speed;
     const points = _getPoints({ x: newX, y: newY }, w, h);
     const collisions = _state.collider.getCollisions(points);
-    console.log(collisions);
 
     if (collisions.length === 0) {
       _setState({
         position: { x: newX, y: newY },
       });
+    } else {
+      console.log("COLLISIONS", collisions);
     }
   }
 
